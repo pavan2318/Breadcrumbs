@@ -3,6 +3,7 @@ const breadcrumbsEl = document.getElementById("breadcrumbs")
 const movesEl = document.getElementById("moves")
 const timerEl = document.getElementById("timer")
 const targetEl = document.getElementById("target-name")
+const toggle = document.getElementById("theme-toggle")
 
 const START_PAGE = "Panama_Canal"
 const TARGET_PAGE = "Banana"
@@ -24,7 +25,6 @@ function loadPage(title) {
       interceptLinks()
       addBreadcrumb(title)
       checkWin(title)
-      history.pushState({}, "", "#" + title)
     })
 }
 
@@ -33,7 +33,14 @@ function interceptLinks() {
     const href = a.getAttribute("href")
     if (!href) return
 
-    if (href.startsWith("./") && !href.includes(":")) {
+    const blocked =
+      href.includes("Wikipedia") ||
+      href.includes("Help") ||
+      href.includes("Special") ||
+      href.includes("Talk") ||
+      href.includes("File")
+
+    if (href.startsWith("./") && !blocked) {
       a.onclick = e => {
         e.preventDefault()
         const next = href.replace("./", "").split("#")[0]
@@ -44,38 +51,36 @@ function interceptLinks() {
     } else {
       a.onclick = e => e.preventDefault()
       a.style.pointerEvents = "none"
-      a.style.opacity = "0.4"
+      a.style.opacity = "0.35"
     }
   })
 }
 
 function addBreadcrumb(title) {
   breadcrumbs.push(title)
-  breadcrumbsEl.innerHTML = breadcrumbs
-    .map(t => t.replaceAll("_", " "))
-    .join(" → ")
+  breadcrumbsEl.textContent =
+    breadcrumbs.map(t => t.replaceAll("_", " ")).join(" → ")
 }
 
 function checkWin(title) {
   if (title === TARGET_PAGE && !hasWon) {
     hasWon = true
-    showWinScreen()
+    showWin()
   }
 }
 
-function showWinScreen() {
+function showWin() {
   const overlay = document.createElement("div")
   overlay.id = "win-overlay"
   overlay.innerHTML = `
     <div class="win-card">
-      <h2>You made it</h2>
+      <h2>You reached ${TARGET_PAGE.replaceAll("_"," ")}</h2>
       <p>${moves} moves</p>
       <p>${Math.floor((Date.now() - startTime) / 1000)} seconds</p>
       <button onclick="location.reload()">Play again</button>
     </div>
   `
   document.body.appendChild(overlay)
-  document.body.style.overflow = "hidden"
 }
 
 setInterval(() => {
@@ -83,8 +88,7 @@ setInterval(() => {
     `${Math.floor((Date.now() - startTime) / 1000)}s`
 }, 1000)
 
-const toggle = document.getElementById("theme-toggle")
-
+/* theme toggle */
 toggle.onclick = () => {
   document.body.classList.toggle("dark")
   localStorage.setItem(
