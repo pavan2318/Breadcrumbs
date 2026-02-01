@@ -3,19 +3,23 @@ const breadcrumbsEl = document.getElementById("breadcrumbs")
 const movesEl = document.getElementById("moves")
 const timerEl = document.getElementById("timer")
 const targetEl = document.getElementById("target-name")
+const progressFill = document.getElementById("progress-fill")
 const toggle = document.getElementById("theme-toggle")
 
-const START_PAGE = "Panama_Canal"
-const TARGET_PAGE = "Banana"
+/* TEST CONFIG */
+const START_PAGE = "India"
+const TARGET_PAGE = "Asia"
 
 let breadcrumbs = []
 let moves = 0
 let startTime = Date.now()
 let hasWon = false
 
-targetEl.textContent = TARGET_PAGE.replaceAll("_", " ")
+targetEl.textContent = TARGET_PAGE
 
 loadPage(START_PAGE)
+
+/* CORE */
 
 function loadPage(title) {
   fetch(`https://en.wikipedia.org/api/rest_v1/page/html/${encodeURIComponent(title)}`)
@@ -25,8 +29,11 @@ function loadPage(title) {
       interceptLinks()
       addBreadcrumb(title)
       checkWin(title)
+      animateBoard()
     })
 }
+
+/* LINK CONTROL */
 
 function interceptLinks() {
   wikiRoot.querySelectorAll("a").forEach(a => {
@@ -46,6 +53,8 @@ function interceptLinks() {
         const next = href.replace("./", "").split("#")[0]
         moves++
         movesEl.textContent = `${moves} moves`
+        updateProgress()
+        feedback()
         loadPage(next)
       }
     } else {
@@ -56,10 +65,29 @@ function interceptLinks() {
   })
 }
 
+/* GAME FEEL */
+
+function feedback() {
+  if (navigator.vibrate) navigator.vibrate(10)
+}
+
+function animateBoard() {
+  wikiRoot.animate(
+    [{ opacity: 0.6 }, { opacity: 1 }],
+    { duration: 150 }
+  )
+}
+
+function updateProgress() {
+  const pct = Math.min((moves / 6) * 100, 100)
+  progressFill.style.width = pct + "%"
+}
+
+/* STATE */
+
 function addBreadcrumb(title) {
   breadcrumbs.push(title)
-  breadcrumbsEl.textContent =
-    breadcrumbs.map(t => t.replaceAll("_", " ")).join(" → ")
+  breadcrumbsEl.textContent = breadcrumbs.join(" → ")
 }
 
 function checkWin(title) {
@@ -70,11 +98,14 @@ function checkWin(title) {
 }
 
 function showWin() {
+  document.body.style.background =
+    "radial-gradient(circle at top, #34c759, #0f0f12)"
+
   const overlay = document.createElement("div")
   overlay.id = "win-overlay"
   overlay.innerHTML = `
     <div class="win-card">
-      <h2>You reached ${TARGET_PAGE.replaceAll("_"," ")}</h2>
+      <h2>🍌 You reached Banana</h2>
       <p>${moves} moves</p>
       <p>${Math.floor((Date.now() - startTime) / 1000)} seconds</p>
       <button onclick="location.reload()">Play again</button>
@@ -83,12 +114,15 @@ function showWin() {
   document.body.appendChild(overlay)
 }
 
+/* TIMER */
+
 setInterval(() => {
   timerEl.textContent =
     `${Math.floor((Date.now() - startTime) / 1000)}s`
 }, 1000)
 
-/* theme toggle */
+/* THEME */
+
 toggle.onclick = () => {
   document.body.classList.toggle("dark")
   localStorage.setItem(
