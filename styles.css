@@ -1,8 +1,8 @@
 :root {
   --bg: #ffffff;
   --text: #111;
-  --muted: #666;
-  --glass: rgba(255,255,255,0.75);
+  --muted: #6e6e73;
+  --card: #ffffff;
   --accent: #007aff;
 }
 
@@ -19,31 +19,34 @@ header {
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--glass);
-  backdrop-filter: blur(14px);
-  padding: 12px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-header .top {
+.header-top {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-header .meta {
+.status {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   font-size: 13px;
   color: var(--muted);
+  margin-top: 6px;
+  flex-wrap: wrap;
 }
 
-#goal {
-  font-size: 14px;
-  margin-top: 4px;
+.target-pill {
+  background: var(--accent);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 500;
 }
 
 #breadcrumbs {
@@ -56,62 +59,60 @@ header .meta {
 
 #wiki-root {
   max-width: 960px;
-  margin: auto;
+  margin: 20px auto;
   padding: 20px;
-  background: var(--bg);
-}
-
-button {
-  border: none;
-  border-radius: 999px;
-  padding: 6px 12px;
-  background: var(--accent);
-  color: white;
-  font-weight: 500;
-}
-
-#win-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.win-card {
-  background: var(--bg);
-  color: var(--text);
-  padding: 24px;
+  background: var(--card);
   border-radius: 18px;
-  text-align: center;
-  width: 260px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
+/* Dark mode */
 body.dark {
   --bg: #0f0f12;
   --text: #f5f5f7;
-  --muted: #aaa;
-  --glass: rgba(20,20,24,0.75);
+  --muted: #a1a1a6;
+  --card: #1c1c1e;
   --accent: #0a84ff;
 }
 
+body.dark header {
+  background: rgba(28,28,30,0.85);
+}
+
+body.dark #wiki-root {
+  background: var(--card);
+}
+
+/* Wikipedia overrides */
+#wiki-root * {
+  background-color: transparent !important;
+  color: var(--text) !important;
+}
+
+#wiki-root a {
+  color: var(--accent) !important;
+}
+
+#wiki-root table,
+#wiki-root .infobox {
+  background: rgba(0,0,0,0.04) !important;
+}
+
+body.dark #wiki-root table,
+body.dark #wiki-root .infobox {
+  background: rgba(255,255,255,0.06) !important;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
   #wiki-root {
-    padding: 12px;
+    margin: 12px;
+    padding: 14px;
     font-size: 15px;
   }
 
   .infobox {
     float: none !important;
     width: 100% !important;
-    margin: 0 0 12px 0 !important;
-  }
-
-  table {
-    display: block;
-    overflow-x: auto;
   }
 }
