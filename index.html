@@ -8,27 +8,23 @@
 </head>
 <body>
   <header>
-    <div class="top">
+    <div class="header-top">
       <h1>Breadcrums</h1>
-      <button id="theme-toggle">🌓</button>
+      <button id="theme-toggle">☾</button>
     </div>
 
-    <div class="meta">
+    <div class="status">
       <span id="moves">0 moves</span>
       <span id="timer">0s</span>
-    </div>
-
-    <div id="goal">
-      Target:
-      <strong id="target-name"></strong>
+      <span class="target-pill">
+        Target: <strong id="target-name"></strong>
+      </span>
     </div>
 
     <div id="breadcrumbs"></div>
   </header>
 
-  <main id="wiki-root">
-    Loading…
-  </main>
+  <main id="wiki-root">Loading…</main>
 
   <script src="app.js"></script>
 </body>
